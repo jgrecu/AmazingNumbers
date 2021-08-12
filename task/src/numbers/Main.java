@@ -1,6 +1,7 @@
 package numbers;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     private static final String AVAILABLE_PROPERTIES = "Available properties: " + Arrays.asList(Property.values());
@@ -62,22 +63,53 @@ public class Main {
                 for (int i = 2; i < strings.length; i++) {
                     properties.add(strings[i].toLowerCase());
                 }
-                if (checkProperty(properties).size() == 1) {
-                    System.out.println("The property [" + checkProperty(properties).get(0).toUpperCase() + "] is wrong.");
+
+                // See below how I restructured the code:
+                // if someAssertionFailed {
+                //     handleIt()
+                //     continue or return
+                // }
+                // if someOtherAssertionFailed {
+                //     handleIt()
+                //     continue or return
+                // }
+                //
+                // executeAction()
+                //
+                // Now the flow is like this - check something, if it's wrong execute the conditional path and end
+                // the iteration (or return from the method). Check another thing and again - if it's wrong handle it
+                // and exit from this scope. Finally, when you get to the end, you execute the action that required
+                // all these prerequisites. To me it's more legible because the main flow of the method goes all the
+                // way down to the end and all edge cases and errors are handled in short conditional branches.
+                // See if it's maybe possible to refactor other long if/else chains.
+
+                // I think it's better not to differentiate between 1 error or multiple errors and try to
+                // handle this with '1 or more errors' approach. I'd also suggest not calling the same method
+                // multiple times, it's better to call it once and save the output to a variable.
+                final ArrayList<String> invalidProperties = findInvalidProperties(properties);
+                if (!invalidProperties.isEmpty()) {
+                    String invalidPropertiesString = invalidProperties.stream()
+                        .map(String::toUpperCase)
+                        .collect(Collectors.joining(", "));
+                    System.out.println("One or more properties are wrong: [" + invalidPropertiesString + "]");
                     System.out.println(AVAILABLE_PROPERTIES);
-                } else if (checkProperty(properties).size() > 1) {
-                    ArrayList<String> wrongProperties = checkProperty(properties);
-                    String wrongPropertiesString = String.join(", ", wrongProperties);
-                    System.out.println("The properties [" + wrongPropertiesString.toUpperCase() + "] are wrong.");
-                    System.out.println(AVAILABLE_PROPERTIES);
-                } else if (checkPropertyPairs(properties)) {
-                    String pairPropertiesString = String.join(", ", getMutuallyExclusive(properties));
-                    System.out.println("The request contains mutually exclusive properties: [" +
-                            pairPropertiesString.toUpperCase() + "]");
-                    System.out.println("There are no numbers with these properties.");
-                } else {
-                    runAmazingNumbers(num, x, properties);
+                    continue;
                 }
+
+                // Now we don't need hasMutuallyExclusiveProperties - we find all mutually exclusive properties and
+                // check if the list is empty or not - same effect but only 1 method is required.
+                final ArrayList<String> mutuallyExclusiveProperties = findMutuallyExclusiveProperties(properties);
+                if (!mutuallyExclusiveProperties.isEmpty()) {
+                    String mutuallyExclusivePropertiesString = mutuallyExclusiveProperties.stream()
+                        .map(String::toUpperCase)
+                        .collect(Collectors.joining(", "));
+                    System.out.println(
+                        "The request contains mutually exclusive properties: [" + mutuallyExclusivePropertiesString + "]");
+                    System.out.println("There are no numbers with these properties.");
+                    continue;
+                }
+
+                runAmazingNumbers(num, x, properties);
             }
         }
     }
@@ -93,10 +125,11 @@ public class Main {
                 "- enter two natural numbers to obtain the properties of the list:\n" +
                 "  * the first parameter represents a starting number;\n" +
                 "  * the second parameter shows how many consecutive numbers are to be printed;\n" +
-                "- two natural numbers and a property to search for;" +
-                "- two natural numbers and properties to search for;" +
-                "- a property preceded by minus must not be present in numbers;" +
-                "- separate the parameters with one space;" +
+                // Nitpick: missing newlines
+                "- two natural numbers and a property to search for;\n" +
+                "- two natural numbers and properties to search for;\n" +
+                "- a property preceded by minus must not be present in numbers;\n" +
+                "- separate the parameters with one space;\n" +
                 "- enter 0 to exit.\n");
     }
 
@@ -290,7 +323,8 @@ public class Main {
         return false;
     }
 
-    public static ArrayList<String> checkProperty(ArrayList<String> properties) {
+    // The meaning of this method is not fully clear, I renamed it to make it clearer what the return value is.
+    public static ArrayList<String> findInvalidProperties(ArrayList<String> properties) {
         ArrayList<String> wrongProperties = new ArrayList<>();
         for (String property : properties) {
             if(!stringInPropertyList(property)) {
@@ -300,7 +334,18 @@ public class Main {
         return wrongProperties;
     }
 
-    public static boolean checkPropertyPairs(ArrayList<String> properties) {
+    // The meaning of this method is not clear, I renamed it so that it's clearer what the return value represents.
+    public static boolean hasMutuallyExclusiveProperties(ArrayList<String> properties) {
+        // I'd add a simple comment: Check include/exclude of same property (e.g. odd -odd).
+        for (String property :  properties) {
+            if (!property.startsWith("-") && properties.contains("-" + property)) {
+                return true;
+            }
+        }
+
+        // Variables evenOrOdd, etc. are used in the return statement so let's keep them as close to the place where
+        // they're used as possible (i.e. I've moved the for loop above).
+        // I'd also add a simple comment: Check mutually exclusive properties (e.g. no number is both even and odd).
         boolean evenOrOdd = properties.contains("even") && properties.contains("odd") ||
                 properties.contains("-even") && properties.contains("-odd");
         boolean duckOrSpy = properties.contains("duck") && properties.contains("spy");
@@ -308,19 +353,16 @@ public class Main {
         boolean happyOrSad = properties.contains("happy") && properties.contains("sad") ||
                 properties.contains("-happy") && properties.contains("-sad");
 
-        for (String property :  properties) {
-            if (!property.startsWith("-") && properties.contains("-" + property)) {
-                return true;
-            }
-        }
-
         return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
 
-    public static ArrayList<String> getMutuallyExclusive(ArrayList<String> properties) {
+    // This method duplicates hasMutuallyExclusiveProperties. I think it would be better to remove
+    // hasMutuallyExclusiveProperties and use getMutuallyExclusive only (see how I modified the usage).
+    public static ArrayList<String> findMutuallyExclusiveProperties(ArrayList<String> properties) {
 
         ArrayList<String> contradictionList = new ArrayList<>();
 
+        // Should it be an if-else chain? What if there are multiple contradictions (e.g. even odd duck spy)?
         if (properties.contains("even") && properties.contains("odd")) {
             contradictionList.add("EVEN");
             contradictionList.add("ODD");
@@ -372,6 +414,21 @@ public class Main {
         String formattedNum = String.format("%,16d", num);
         stringBuilder.append(formattedNum);
         stringBuilder.append(" is");
+
+        // The approach with isNotFirstProperty is not good - that's too many if statements. I'd use a list instead to
+        // hold all matched properties and then join all elements which will automatically solve the problem with the
+        // comma. There's also no need to save the results of each method to a variable.
+        final List<String> foundProperties = new ArrayList<>();
+        if (isEven(num)) {
+            foundProperties.add("even");
+        }
+        if (isBuzz(num)) {
+            foundProperties.add("buzz");
+        }
+        // ...
+        stringBuilder.append(String.join(", ", foundProperties));
+
+
         boolean isEven = isEven(num);
         boolean isBuzz = isBuzz(num);
         boolean isDuck = isDuck(num);
