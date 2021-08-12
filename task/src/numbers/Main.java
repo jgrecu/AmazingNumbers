@@ -58,20 +58,40 @@ public class Main {
             } else {
                 long num = Long.parseLong(strings[0]);
                 int x = Integer.parseInt(strings[1]);
-                ArrayList<String> properties = new ArrayList<>();
+                final ArrayList<String> properties = new ArrayList<>();
                 for (int i = 2; i < strings.length; i++) {
                     properties.add(strings[i].toLowerCase());
                 }
-                if (checkProperty(properties).size() == 1) {
-                    System.out.println("The property [" + checkProperty(properties).get(0).toUpperCase() + "] is wrong.");
+                /* final ArrayList<String> invalidProperties = findInvalidProperties(properties);
+                 * if (!invalidProperties.isEmpty()) {
+                 *     String invalidPropertiesString = invalidProperties.stream()
+                 *                         .map(String::toUpperCase)
+                 *                         .collect(Collectors.joining(", "));
+                 *     System.out.println("One or more properties are wrong: [" + invalidPropertiesString + "]");
+                 *     System.out.println(AVAILABLE_PROPERTIES);
+                 *     continue;
+                 * }
+                 * final ArrayList<String> mutuallyExclusiveProperties = findMutuallyExclusiveProperties(properties);
+                 * if (!mutuallyExclusiveProperties.isEmpty()) {
+                 *     String mutuallyExclusivePropertiesString = mutuallyExclusiveProperties.stream()
+                 *                         .map(String::toUpperCase)
+                 *                         .collect(Collectors.joining(", "));
+                 *     System.out.println("The request contains mutually exclusive properties: ["
+                 *                 + mutuallyExclusivePropertiesString + "]");
+                 *     System.out.println("There are no numbers with these properties.");
+                 *     continue;
+                 * }
+                 */
+                if (findInvalidProperties(properties).size() == 1) {
+                    System.out.println("The property [" + findInvalidProperties(properties).get(0).toUpperCase() + "] is wrong.");
                     System.out.println(AVAILABLE_PROPERTIES);
-                } else if (checkProperty(properties).size() > 1) {
-                    ArrayList<String> wrongProperties = checkProperty(properties);
+                } else if (findInvalidProperties(properties).size() > 1) {
+                    ArrayList<String> wrongProperties = findInvalidProperties(properties);
                     String wrongPropertiesString = String.join(", ", wrongProperties);
                     System.out.println("The properties [" + wrongPropertiesString.toUpperCase() + "] are wrong.");
                     System.out.println(AVAILABLE_PROPERTIES);
                 } else if (checkPropertyPairs(properties)) {
-                    String pairPropertiesString = String.join(", ", getMutuallyExclusive(properties));
+                    String pairPropertiesString = String.join(", ", findMutuallyExclusiveProperties(properties));
                     System.out.println("The request contains mutually exclusive properties: [" +
                             pairPropertiesString.toUpperCase() + "]");
                     System.out.println("There are no numbers with these properties.");
@@ -93,10 +113,10 @@ public class Main {
                 "- enter two natural numbers to obtain the properties of the list:\n" +
                 "  * the first parameter represents a starting number;\n" +
                 "  * the second parameter shows how many consecutive numbers are to be printed;\n" +
-                "- two natural numbers and a property to search for;" +
-                "- two natural numbers and properties to search for;" +
-                "- a property preceded by minus must not be present in numbers;" +
-                "- separate the parameters with one space;" +
+                "- two natural numbers and a property to search for;\n" +
+                "- two natural numbers and properties to search for;\n" +
+                "- a property preceded by minus must not be present in numbers;\n" +
+                "- separate the parameters with one space;\n" +
                 "- enter 0 to exit.\n");
     }
 
@@ -237,8 +257,8 @@ public class Main {
     }
 
     public static boolean isHappy(long n) {
-        long m = 0;
-        int digit = 0;
+        long m;
+        int digit;
         HashSet<Long> cycle = new HashSet<>();
         while(n != 1 && cycle.add(n)){
             m = 0;
@@ -253,8 +273,8 @@ public class Main {
     }
 
     public static boolean isSad(long n) {
-        long m = 0;
-        int digit = 0;
+        long m;
+        int digit;
         HashSet<Long> cycle = new HashSet<>();
         while(n != 1 && cycle.add(n)){
             m = 0;
@@ -290,8 +310,8 @@ public class Main {
         return false;
     }
 
-    public static ArrayList<String> checkProperty(ArrayList<String> properties) {
-        ArrayList<String> wrongProperties = new ArrayList<>();
+    public static ArrayList<String> findInvalidProperties(ArrayList<String> properties) {
+        final ArrayList<String> wrongProperties = new ArrayList<>();
         for (String property : properties) {
             if(!stringInPropertyList(property)) {
                 wrongProperties.add(property);
@@ -301,6 +321,13 @@ public class Main {
     }
 
     public static boolean checkPropertyPairs(ArrayList<String> properties) {
+        // Check include/exclude of same property (e.g. odd -odd)
+        for (String property :  properties) {
+            if (!property.startsWith("-") && properties.contains("-" + property)) {
+                return true;
+            }
+        }
+        //Check mutually exclusive properties (e.g. no number is both even and odd or duck and spy...).
         boolean evenOrOdd = properties.contains("even") && properties.contains("odd") ||
                 properties.contains("-even") && properties.contains("-odd");
         boolean duckOrSpy = properties.contains("duck") && properties.contains("spy");
@@ -308,18 +335,12 @@ public class Main {
         boolean happyOrSad = properties.contains("happy") && properties.contains("sad") ||
                 properties.contains("-happy") && properties.contains("-sad");
 
-        for (String property :  properties) {
-            if (!property.startsWith("-") && properties.contains("-" + property)) {
-                return true;
-            }
-        }
 
         return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
 
-    public static ArrayList<String> getMutuallyExclusive(ArrayList<String> properties) {
-
-        ArrayList<String> contradictionList = new ArrayList<>();
+    public static ArrayList<String> findMutuallyExclusiveProperties(ArrayList<String> properties) {
+        final ArrayList<String> contradictionList = new ArrayList<>();
 
         if (properties.contains("even") && properties.contains("odd")) {
             contradictionList.add("EVEN");
@@ -368,92 +389,45 @@ public class Main {
     }
 
     public static void printProprietiesShort(long num) {
-        StringBuilder stringBuilder = new StringBuilder();
+        final List<String> foundProperties = new ArrayList<>();
+        final StringBuilder stringBuilder = new StringBuilder();
         String formattedNum = String.format("%,16d", num);
         stringBuilder.append(formattedNum);
         stringBuilder.append(" is");
-        boolean isEven = isEven(num);
-        boolean isBuzz = isBuzz(num);
-        boolean isDuck = isDuck(num);
-        boolean isPalindromic = isPalindromic(num);
-        boolean isGapful = isGapful(num);
-        boolean isSpy = isSpy(num);
-        boolean isSunny = isSunny(num);
-        boolean isSquare = isSquare(num);
-        boolean isJumping = isJumping(num);
-        boolean isHappy = isHappy(num);
-        boolean isSad = isSad(num);
-        boolean isNotFirstProperty = false;
 
-        if (isBuzz) {
-            stringBuilder.append(" buzz");
-            isNotFirstProperty = true;
+        if (isBuzz(num)) {
+            foundProperties.add("buzz");
         }
-        if (isDuck) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" duck");
-            isNotFirstProperty = true;
+        if (isDuck(num)) {
+            foundProperties.add("duck");
         }
-        if (isPalindromic) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" palindromic");
-            isNotFirstProperty = true;
+        if (isPalindromic(num)) {
+            foundProperties.add("palindromic");
         }
-        if (isGapful) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" gapful");
-            isNotFirstProperty = true;
+        if (isGapful(num)) {
+            foundProperties.add("gapful");
         }
-        if (isSpy) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" spy");
-            isNotFirstProperty = true;
+        if (isSpy(num)) {
+            foundProperties.add("spy");
         }
-        if (isSunny) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" sunny");
-            isNotFirstProperty = true;
+        if (isSunny(num)) {
+            foundProperties.add("sunny");
         }
-        if (isSquare) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" square");
-            isNotFirstProperty = true;
+        if (isSquare(num)) {
+            foundProperties.add("square");
         }
-        if (isJumping) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" jumping");
-            isNotFirstProperty = true;
-        } if (isHappy) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" happy");
-            isNotFirstProperty = true;
-        } if (isSad) {
-            if (isNotFirstProperty) {
-                stringBuilder.append(",");
-            }
-            stringBuilder.append(" sad");
-            isNotFirstProperty = true;
+        if (isJumping(num)) {
+            foundProperties.add("jumping");
         }
-        if (isNotFirstProperty) {
-            stringBuilder.append(",");
+        if (isHappy(num)) {
+            foundProperties.add("happy");
         }
-        stringBuilder.append(isEven ? " even" : " odd");
+        if (isSad(num)) {
+            foundProperties.add("sad");
+        }
+
+        foundProperties.add(isEven(num) ? "even" : "odd");
+        stringBuilder.append(String.join(", ", foundProperties));
 
         System.out.println(stringBuilder);
     }
