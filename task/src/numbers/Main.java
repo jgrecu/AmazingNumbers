@@ -7,8 +7,6 @@ public class Main {
 
     enum Property {
         EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING, HAPPY, SAD
-
-
     }
 
     public static void main(String[] args) {
@@ -51,7 +49,7 @@ public class Main {
             if (strings.length == 1) {
                 long num = Long.parseLong(strings[0]);
                 printProprieties(num);
-            } else if (strings.length == 2){
+            } else if (strings.length == 2) {
                 long num = Long.parseLong(strings[0]);
                 int x = Integer.parseInt(strings[1]);
                 runAmazingNumbers(num, x);
@@ -86,7 +84,7 @@ public class Main {
                     System.out.println("The property [" + findInvalidProperties(properties).get(0).toUpperCase() + "] is wrong.");
                     System.out.println(AVAILABLE_PROPERTIES);
                 } else if (findInvalidProperties(properties).size() > 1) {
-                    ArrayList<String> wrongProperties = findInvalidProperties(properties);
+                    List<String> wrongProperties = findInvalidProperties(properties);
                     String wrongPropertiesString = String.join(", ", wrongProperties);
                     System.out.println("The properties [" + wrongPropertiesString.toUpperCase() + "] are wrong.");
                     System.out.println(AVAILABLE_PROPERTIES);
@@ -158,7 +156,7 @@ public class Main {
         }
     }
 
-    public static void runAmazingNumbers(long num, int x, ArrayList<String> properties) {
+    public static void runAmazingNumbers(long num, int x, List<String> properties) {
         boolean hasProperty;
         long checkRange = 0;
         while (checkRange < x) {
@@ -235,7 +233,7 @@ public class Main {
     }
 
     public static boolean isSunny(long n) {
-        return (int) Math.sqrt(n+1) == Math.sqrt(n+1);
+        return (int) Math.sqrt(n + 1) == Math.sqrt(n + 1);
     }
 
     public static boolean isSquare(long n) {
@@ -243,12 +241,12 @@ public class Main {
     }
 
     public static boolean isJumping(long n) {
-        while(n != 0) {
+        while (n != 0) {
             long digit1 = n % 10;
-            n = n/10;
-            if(n != 0) {
+            n = n / 10;
+            if (n != 0) {
                 long digit2 = n % 10;
-                if(Math.abs(digit1 - digit2) != 1) {
+                if (Math.abs(digit1 - digit2) != 1) {
                     return false;
                 }
             }
@@ -256,43 +254,37 @@ public class Main {
         return true;
     }
 
-    public static boolean isHappy(long n) {
+    private static long processHappySadNumber(long n) {
         long m;
         int digit;
         HashSet<Long> cycle = new HashSet<>();
-        while(n != 1 && cycle.add(n)){
+        while (n != 1 && cycle.add(n)) {
             m = 0;
-            while(n > 0){
-                digit = (int)(n % 10);
+            while (n > 0) {
+                digit = (int) (n % 10);
                 m += digit * digit;
                 n /= 10;
             }
             n = m;
         }
-        return n == 1;
+        return n;
+    }
+
+    public static boolean isHappy(long n) {
+        long m = processHappySadNumber(n);
+        return m == 1;
     }
 
     public static boolean isSad(long n) {
-        long m;
-        int digit;
-        HashSet<Long> cycle = new HashSet<>();
-        while(n != 1 && cycle.add(n)){
-            m = 0;
-            while(n > 0){
-                digit = (int)(n % 10);
-                m += digit * digit;
-                n /= 10;
-            }
-            n = m;
-        }
-        return n != 1;
+        long m = processHappySadNumber(n);
+        return m != 1;
     }
 
     public static boolean isNumeric(String str) {
         try {
             Long.parseLong(str);
             return true;
-        } catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -302,7 +294,7 @@ public class Main {
             string = string.substring(1);
         }
         string = string.toUpperCase();
-        for(Property property : Property.values()) {
+        for (Property property : Property.values()) {
             if (string.equals(property.name())) {
                 return true;
             }
@@ -310,19 +302,19 @@ public class Main {
         return false;
     }
 
-    public static ArrayList<String> findInvalidProperties(ArrayList<String> properties) {
-        final ArrayList<String> wrongProperties = new ArrayList<>();
+    public static List<String> findInvalidProperties(List<String> properties) {
+        final List<String> wrongProperties = new ArrayList<>();
         for (String property : properties) {
-            if(!stringInPropertyList(property)) {
+            if (!stringInPropertyList(property)) {
                 wrongProperties.add(property);
             }
         }
         return wrongProperties;
     }
 
-    public static boolean checkPropertyPairs(ArrayList<String> properties) {
+    public static boolean checkPropertyPairs(List<String> properties) {
         // Check include/exclude of same property (e.g. odd -odd)
-        for (String property :  properties) {
+        for (String property : properties) {
             if (!property.startsWith("-") && properties.contains("-" + property)) {
                 return true;
             }
@@ -334,7 +326,6 @@ public class Main {
         boolean sunnyOrSquare = properties.contains("sunny") && properties.contains("square");
         boolean happyOrSad = properties.contains("happy") && properties.contains("sad") ||
                 properties.contains("-happy") && properties.contains("-sad");
-
 
         return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
@@ -361,7 +352,7 @@ public class Main {
             contradictionList.add("-HAPPY");
             contradictionList.add("-SAD");
         } else {
-            for (String property :  properties) {
+            for (String property : properties) {
                 if (!property.startsWith("-") && properties.contains("-" + property)) {
                     contradictionList.add(property);
                     contradictionList.add("-" + property);
