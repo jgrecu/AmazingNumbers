@@ -76,7 +76,7 @@ public class Main {
                  *                         .collect(Collectors.joining(", "));
                  *     System.out.println("The request contains mutually exclusive properties: ["
                  *                 + mutuallyExclusivePropertiesString + "]");
-                 *     System.out.println("There are no numbers with these properties.");
+                 *     System.out.println("There are no java.numbers with these properties.");
                  *     continue;
                  * }
                  */
@@ -92,7 +92,7 @@ public class Main {
                     String pairPropertiesString = String.join(", ", findMutuallyExclusiveProperties(properties));
                     System.out.println("The request contains mutually exclusive properties: [" +
                             pairPropertiesString.toUpperCase() + "]");
-                    System.out.println("There are no numbers with these properties.");
+                    System.out.println("There are no java.numbers with these properties.");
                 } else {
                     runAmazingNumbers(num, x, properties);
                 }
@@ -108,12 +108,12 @@ public class Main {
     public static void printInstructions() {
         System.out.println("Supported requests:\n" +
                 "- enter a natural number to know its properties;\n" +
-                "- enter two natural numbers to obtain the properties of the list:\n" +
+                "- enter two natural java.numbers to obtain the properties of the list:\n" +
                 "  * the first parameter represents a starting number;\n" +
-                "  * the second parameter shows how many consecutive numbers are to be printed;\n" +
-                "- two natural numbers and a property to search for;\n" +
-                "- two natural numbers and properties to search for;\n" +
-                "- a property preceded by minus must not be present in numbers;\n" +
+                "  * the second parameter shows how many consecutive java.numbers are to be printed;\n" +
+                "- two natural java.numbers and a property to search for;\n" +
+                "- two natural java.numbers and properties to search for;\n" +
+                "- a property preceded by minus must not be present in java.numbers;\n" +
                 "- separate the parameters with one space;\n" +
                 "- enter 0 to exit.\n");
     }

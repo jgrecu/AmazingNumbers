@@ -1,12 +1,12 @@
 # AmazingNumbers
 ## About
-We use numbers every day. But do you know how many different properties they have? Let's take a look at some of the amazing properties of numbers. After completing this project, you will write a program that knows how to determine whether a number is Palindromic or Gapful, or how to distinguish Spy numbers from others. Numbers can be fascinating!
+We use java.numbers every day. But do you know how many different properties they have? Let's take a look at some of the amazing properties of java.numbers. After completing this project, you will write a program that knows how to determine whether a number is Palindromic or Gapful, or how to distinguish Spy java.numbers from others. Numbers can be fascinating!
 
 <h2>Description</h2>
 
 <p>In number theory, a <strong>happy </strong>number is a number that reaches 1 after a sequence during which the number is replaced by the sum of each digit squares. For example, 13 is a happy number, as 1<sup>2 </sup>+ 3<sup>2</sup> = 10<strong> </strong>which leads to 1<sup>2</sup> + 0<sup>2</sup> = 1. On the other hand, 4 is not a happy number because the sequence starts with 4<sup>2</sup> = 16, 1<sup>2</sup> + 6<sup>2</sup> = 37, and finally reaches 2<sup>2</sup> + 0<sup>2</sup> = 4. This is the number that started the sequence, so the process goes on in an infinite cycle. A number that is not happy is called <strong>Sad</strong> (or <strong>Unhappy</strong>).</p>
 
-<p>Our program is finished. It can indicate many interesting properties of numbers, it knows how to calculate them. Now, when prompted, a user can have a list of number properties. To complete the program, let's add an ability to exclude a property from the search query. If a user puts a <strong>minus </strong>(<code class="java">-</code>) before the property, exclude this property from the search query. For example, if a user specifies <code class="java">palindromic -duck</code>, it means that they are looking for Palindromic numbers that are not Ducks.</p>
+<p>Our program is finished. It can indicate many interesting properties of java.numbers, it knows how to calculate them. Now, when prompted, a user can have a list of number properties. To complete the program, let's add an ability to exclude a property from the search query. If a user puts a <strong>minus </strong>(<code class="java">-</code>) before the property, exclude this property from the search query. For example, if a user specifies <code class="java">palindromic -duck</code>, it means that they are looking for Palindromic java.numbers that are not Ducks.</p>
 
 <h2>Objectives</h2>
 
@@ -18,27 +18,27 @@ We use numbers every day. But do you know how many different properties they hav
 	<li>Ask for a request;</li>
 	<li>If a user enters an empty request, print the instructions;</li>
 	<li>If the user enters zero, terminate the program;</li>
-	<li>If numbers are not natural, print the error message;</li>
+	<li>If java.numbers are not natural, print the error message;</li>
 	<li>If an incorrect property is specified, print the error message and the list of available properties;</li>
 	<li>For one number, print the properties of the number;</li>
-	<li>For two numbers, print the properties of all numbers in the list;</li>
-	<li>For two numbers and two properties, print the list of numbers that contain the specified properties;</li>
+	<li>For two java.numbers, print the properties of all java.numbers in the list;</li>
+	<li>For two java.numbers and two properties, print the list of java.numbers that contain the specified properties;</li>
 	<li>If a property is preceded by a minus, this property should not be present in a number;</li>
 	<li>If the user specifies mutually exclusive properties, abort the request and warn the user.</li>
 	<li>Once the request is processed, continue execution from step 3.</li>
 </ol>
 
-<p>In this stage, property names include <code class="java">even</code>, <code class="java">odd</code>, <code class="java">buzz</code>, <code class="java">duck</code>, <code class="java">palindromic</code>, <code class="java">gapful</code>, <code class="java">spy</code>, <code class="java">sunny</code>, <code class="java">square</code>, <code class="java">jumping</code>, <code class="java">sad</code>, and <code class="java">happy</code>. Mutually exclusive properties are <strong>even/odd</strong>, <strong>duck/spy</strong>, <strong>sunny/square</strong>, <strong>sad/happy </strong>pairs, as well as direct opposites (<code class="java">property</code> and <code class="java">-property</code>). The test won't check the order of properties, their indentation, and spaces. You may format numbers as you like.</p>
+<p>In this stage, property names include <code class="java">even</code>, <code class="java">odd</code>, <code class="java">buzz</code>, <code class="java">duck</code>, <code class="java">palindromic</code>, <code class="java">gapful</code>, <code class="java">spy</code>, <code class="java">sunny</code>, <code class="java">square</code>, <code class="java">jumping</code>, <code class="java">sad</code>, and <code class="java">happy</code>. Mutually exclusive properties are <strong>even/odd</strong>, <strong>duck/spy</strong>, <strong>sunny/square</strong>, <strong>sad/happy </strong>pairs, as well as direct opposites (<code class="java">property</code> and <code class="java">-property</code>). The test won't check the order of properties, their indentation, and spaces. You may format java.numbers as you like.</p>
 
 <h3>Instructions</h3>
 
 <pre><code class="language-no-highlight">Supported requests:
 - enter a natural number to know its properties;
-- enter two natural numbers to obtain the properties of the list:
+- enter two natural java.numbers to obtain the properties of the list:
   * the first parameter represents a starting number;
-  * the second parameter shows how many consecutive numbers are to be printed;
-- two natural numbers and properties to search for;
-- a property preceded by minus must not be present in numbers;
+  * the second parameter shows how many consecutive java.numbers are to be printed;
+- two natural java.numbers and properties to search for;
+- a property preceded by minus must not be present in java.numbers;
 - separate the parameters with one space;
 - enter 0 to exit.</code></pre>
 
@@ -57,13 +57,13 @@ Available properties:
 [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING, HAPPY, SAD]</code></pre>
 
 <pre><code class="language-no-highlight">The request contains mutually exclusive properties: [HAPPY, SAD]
-There are no numbers with these properties.</code></pre>
+There are no java.numbers with these properties.</code></pre>
 
 <pre><code class="language-no-highlight">The request contains mutually exclusive properties: [-HAPPY, -SAD]
-There are no numbers with these properties.</code></pre>
+There are no java.numbers with these properties.</code></pre>
 
 <pre><code class="language-no-highlight">The request contains mutually exclusive properties: [GAPFUL, -GAPFUL]
-There are no numbers with these properties.</code></pre>
+There are no java.numbers with these properties.</code></pre>
 
 <h2>Examples</h2>
 
@@ -75,11 +75,11 @@ There are no numbers with these properties.</code></pre>
 
 Supported requests:
 - enter a natural number to know its properties;
-- enter two natural numbers to obtain the properties of the list:
+- enter two natural java.numbers to obtain the properties of the list:
   * the first parameter represents a starting number;
-  * the second parameter shows how many consecutive numbers are to be processed;
-- two natural numbers and properties to search for;
-- a property preceded by minus must not be present in numbers;
+  * the second parameter shows how many consecutive java.numbers are to be processed;
+- two natural java.numbers and properties to search for;
+- a property preceded by minus must not be present in java.numbers;
 - separate the parameters with one space;
 - enter 0 to exit.
 
@@ -115,17 +115,17 @@ Enter a request: 1 5 -even
 Enter a request: 1 5 -odd -even gapful
 
 The request contains mutually exclusive properties: [-ODD, -EVEN]
-There are no numbers with these properties.
+There are no java.numbers with these properties.
 
 Enter a request: 1 5 odd square -odd
 
 The request contains mutually exclusive properties: [-ODD, ODD]
-There are no numbers with these properties.
+There are no java.numbers with these properties.
 
 Enter a request: 1 5 sunny square
 
 The request contains mutually exclusive properties: [SQUARE, SUNNY]
-There are no numbers with these properties.
+There are no java.numbers with these properties.
 
 Enter a request: 1 5 -sunny -square
 
