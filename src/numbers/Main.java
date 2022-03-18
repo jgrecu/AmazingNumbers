@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
     private static final String AVAILABLE_PROPERTIES = "Available properties: " + Arrays.asList(Property.values());
 
-    enum Property {
+    private enum Property {
         EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING, HAPPY, SAD
     }
 
@@ -101,11 +101,11 @@ public class Main {
     }
 
 
-    public static void printWelcome() {
+    private static void printWelcome() {
         System.out.println("Welcome to Amazing Numbers!\n");
     }
 
-    public static void printInstructions() {
+    private static void printInstructions() {
         System.out.println("Supported requests:\n" +
                 "- enter a natural number to know its properties;\n" +
                 "- enter two natural java.numbers to obtain the properties of the list:\n" +
@@ -118,14 +118,14 @@ public class Main {
                 "- enter 0 to exit.\n");
     }
 
-    public static void runAmazingNumbers(long num, int x) {
+    private static void runAmazingNumbers(long num, int x) {
         for (int i = 0; i < x; i++) {
             printProprietiesShort(num);
             num++;
         }
     }
 
-    public static boolean runNumber(long num, String property) {
+    private static boolean runNumber(long num, String property) {
         switch (property) {
             case "even":
                 return isEven(num);
@@ -156,7 +156,7 @@ public class Main {
         }
     }
 
-    public static void runAmazingNumbers(long num, int x, List<String> properties) {
+    private static void runAmazingNumbers(long num, int x, List<String> properties) {
         boolean hasProperty;
         long checkRange = 0;
         while (checkRange < x) {
@@ -181,24 +181,24 @@ public class Main {
         }
     }
 
-    public static boolean isEven(long n) {
+    private static boolean isEven(long n) {
         return n % 2 == 0;
     }
 
-    public static boolean isOdd(long n) {
+    private static boolean isOdd(long n) {
         return n % 2 != 0;
     }
 
-    public static boolean isBuzz(long n) {
+    private static boolean isBuzz(long n) {
         return n % 7 == 0 || n % 10 == 7;
     }
 
-    public static boolean isDuck(long n) {
+    private static boolean isDuck(long n) {
         String stringNum = String.valueOf(n);
         return stringNum.contains("0");
     }
 
-    public static boolean isPalindromic(long n) {
+    private static boolean isPalindromic(long n) {
         long original = n;
         long reverse = 0;
         while (n > 0) {
@@ -209,7 +209,7 @@ public class Main {
         return original == reverse;
     }
 
-    public static boolean isGapful(long n) {
+    private static boolean isGapful(long n) {
         if (n / 100 > 0) {
             String[] strings = String.valueOf(n).split("");
             String concatFirstLast = strings[0] + strings[strings.length - 1];
@@ -220,7 +220,7 @@ public class Main {
         }
     }
 
-    public static boolean isSpy(long n) {
+    private static boolean isSpy(long n) {
         long sum = 0;
         long product = 1;
         while (n > 0) {
@@ -232,15 +232,15 @@ public class Main {
         return sum == product;
     }
 
-    public static boolean isSunny(long n) {
+    private static boolean isSunny(long n) {
         return (int) Math.sqrt(n + 1) == Math.sqrt(n + 1);
     }
 
-    public static boolean isSquare(long n) {
+    private static boolean isSquare(long n) {
         return (int) Math.sqrt(n) == Math.sqrt(n);
     }
 
-    public static boolean isJumping(long n) {
+    private static boolean isJumping(long n) {
         while (n != 0) {
             long digit1 = n % 10;
             n = n / 10;
@@ -270,17 +270,17 @@ public class Main {
         return n;
     }
 
-    public static boolean isHappy(long n) {
+    private static boolean isHappy(long n) {
         long m = processHappySadNumber(n);
         return m == 1;
     }
 
-    public static boolean isSad(long n) {
+    private static boolean isSad(long n) {
         long m = processHappySadNumber(n);
         return m != 1;
     }
 
-    public static boolean isNumeric(String str) {
+    private static boolean isNumeric(String str) {
         try {
             Long.parseLong(str);
             return true;
@@ -289,7 +289,7 @@ public class Main {
         }
     }
 
-    public static boolean stringInPropertyList(String string) {
+    private static boolean stringInPropertyList(String string) {
         if (string.startsWith("-")) {
             string = string.substring(1);
         }
@@ -302,7 +302,7 @@ public class Main {
         return false;
     }
 
-    public static List<String> findInvalidProperties(List<String> properties) {
+    private static List<String> findInvalidProperties(List<String> properties) {
         final List<String> wrongProperties = new ArrayList<>();
         for (String property : properties) {
             if (!stringInPropertyList(property)) {
@@ -312,7 +312,7 @@ public class Main {
         return wrongProperties;
     }
 
-    public static boolean checkPropertyPairs(List<String> properties) {
+    private static boolean checkPropertyPairs(List<String> properties) {
         // Check include/exclude of same property (e.g. odd -odd)
         for (String property : properties) {
             if (!property.startsWith("-") && properties.contains("-" + property)) {
@@ -330,7 +330,7 @@ public class Main {
         return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
 
-    public static ArrayList<String> findMutuallyExclusiveProperties(ArrayList<String> properties) {
+    private static ArrayList<String> findMutuallyExclusiveProperties(ArrayList<String> properties) {
         final ArrayList<String> contradictionList = new ArrayList<>();
 
         if (properties.contains("even") && properties.contains("odd")) {
@@ -363,7 +363,7 @@ public class Main {
         return contradictionList;
     }
 
-    public static void printProprieties(long num) {
+    private static void printProprieties(long num) {
         System.out.printf("Properties of %,d %n", num);
         System.out.printf("%12s: %b %n", "buzz", isBuzz(num));
         System.out.printf("%12s: %b %n", "duck", isDuck(num));
@@ -379,7 +379,7 @@ public class Main {
         System.out.printf("%12s: %b %n", "odd", isOdd(num));
     }
 
-    public static void printProprietiesShort(long num) {
+    private static void printProprietiesShort(long num) {
         final List<String> foundProperties = new ArrayList<>();
         final StringBuilder stringBuilder = new StringBuilder();
         String formattedNum = String.format("%,16d", num);
