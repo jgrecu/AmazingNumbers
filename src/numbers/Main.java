@@ -1,6 +1,8 @@
 package numbers;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 public class Main {
     private static final String AVAILABLE_PROPERTIES = "Available properties: " + Arrays.asList(Property.values());
@@ -24,21 +26,15 @@ public class Main {
                 continue;
             }
 
-            String[] strings = inString.split(" ");
+            String[] strings = inString.split(" ", 3);
 
             if (!isNumeric(strings[0])) {
-                System.out.println("The first parameter should be a natural number or zero.");
-                continue;
-            } else if (isNumeric(strings[0]) && Long.parseLong(strings[0]) < 0) {
                 System.out.println("The first parameter should be a natural number or zero.");
                 continue;
             } else if (strings[0].equals("0")) {
                 System.out.println("Goodbye!");
                 break;
             } else if (strings.length >= 2 && !isNumeric(strings[1])) {
-                System.out.println("The second parameter should be a natural number.");
-                continue;
-            } else if (strings.length >= 2 && isNumeric(strings[1]) && Integer.parseInt(strings[1]) < 0) {
                 System.out.println("The second parameter should be a natural number.");
                 continue;
             } else if (strings.length >= 2 && strings[1].equals("0")) {
@@ -56,46 +52,29 @@ public class Main {
             } else {
                 long num = Long.parseLong(strings[0]);
                 int x = Integer.parseInt(strings[1]);
-                final ArrayList<String> properties = new ArrayList<>();
-                for (int i = 2; i < strings.length; i++) {
-                    properties.add(strings[i].toLowerCase());
+                final List<String> properties = Arrays.stream(strings[2].split(" "))
+                        .map(String::toLowerCase).collect(Collectors.toList());
+
+                final List<String> invalidProperties = findInvalidProperties(properties);
+                if (!invalidProperties.isEmpty()) {
+                    String invalidPropertiesString = invalidProperties.stream()
+                            .map(String::toUpperCase)
+                            .collect(Collectors.joining(", "));
+                    System.out.println("One or more properties are wrong: [" + invalidPropertiesString + "]");
+                    System.out.println(AVAILABLE_PROPERTIES);
+                    continue;
                 }
-                /* final ArrayList<String> invalidProperties = findInvalidProperties(properties);
-                 * if (!invalidProperties.isEmpty()) {
-                 *     String invalidPropertiesString = invalidProperties.stream()
-                 *                         .map(String::toUpperCase)
-                 *                         .collect(Collectors.joining(", "));
-                 *     System.out.println("One or more properties are wrong: [" + invalidPropertiesString + "]");
-                 *     System.out.println(AVAILABLE_PROPERTIES);
-                 *     continue;
-                 * }
-                 * final ArrayList<String> mutuallyExclusiveProperties = findMutuallyExclusiveProperties(properties);
-                 * if (!mutuallyExclusiveProperties.isEmpty()) {
-                 *     String mutuallyExclusivePropertiesString = mutuallyExclusiveProperties.stream()
-                 *                         .map(String::toUpperCase)
-                 *                         .collect(Collectors.joining(", "));
-                 *     System.out.println("The request contains mutually exclusive properties: ["
-                 *                 + mutuallyExclusivePropertiesString + "]");
-                 *     System.out.println("There are no java.numbers with these properties.");
-                 *     continue;
-                 * }
-                 */
-                if (findInvalidProperties(properties).size() == 1) {
-                    System.out.println("The property [" + findInvalidProperties(properties).get(0).toUpperCase() + "] is wrong.");
-                    System.out.println(AVAILABLE_PROPERTIES);
-                } else if (findInvalidProperties(properties).size() > 1) {
-                    List<String> wrongProperties = findInvalidProperties(properties);
-                    String wrongPropertiesString = String.join(", ", wrongProperties);
-                    System.out.println("The properties [" + wrongPropertiesString.toUpperCase() + "] are wrong.");
-                    System.out.println(AVAILABLE_PROPERTIES);
-                } else if (checkPropertyPairs(properties)) {
-                    String pairPropertiesString = String.join(", ", findMutuallyExclusiveProperties(properties));
-                    System.out.println("The request contains mutually exclusive properties: [" +
-                            pairPropertiesString.toUpperCase() + "]");
+                final List<String> mutuallyExclusiveProperties = findMutuallyExclusiveProperties(properties);
+                if (!mutuallyExclusiveProperties.isEmpty()) {
+                    String mutuallyExclusivePropertiesString = mutuallyExclusiveProperties.stream()
+                            .map(String::toUpperCase)
+                            .collect(Collectors.joining(", "));
+                    System.out.println("The request contains mutually exclusive properties: ["
+                            + mutuallyExclusivePropertiesString + "]");
                     System.out.println("There are no java.numbers with these properties.");
-                } else {
-                    runAmazingNumbers(num, x, properties);
+                    continue;
                 }
+                runAmazingNumbers(num, x, properties);
             }
         }
     }
@@ -119,10 +98,7 @@ public class Main {
     }
 
     public static void runAmazingNumbers(long num, int x) {
-        for (int i = 0; i < x; i++) {
-            printProprietiesShort(num);
-            num++;
-        }
+        LongStream.range(num, num + x).forEach(Main::printProprietiesShort);
     }
 
     public static boolean runNumber(long num, String property) {
@@ -281,12 +257,7 @@ public class Main {
     }
 
     public static boolean isNumeric(String str) {
-        try {
-            Long.parseLong(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        return str.matches("(?!-)\\d+");
     }
 
     public static boolean stringInPropertyList(String string) {
@@ -330,8 +301,8 @@ public class Main {
         return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
 
-    public static ArrayList<String> findMutuallyExclusiveProperties(ArrayList<String> properties) {
-        final ArrayList<String> contradictionList = new ArrayList<>();
+    public static List<String> findMutuallyExclusiveProperties(List<String> properties) {
+        final List<String> contradictionList = new ArrayList<>();
 
         if (properties.contains("even") && properties.contains("odd")) {
             contradictionList.add("EVEN");
@@ -384,8 +355,17 @@ public class Main {
         final StringBuilder stringBuilder = new StringBuilder();
         String formattedNum = String.format("%,16d", num);
         stringBuilder.append(formattedNum);
-        stringBuilder.append(" is");
+        stringBuilder.append(" is ");
 
+        processProperties(num, foundProperties);
+
+        foundProperties.add(isEven(num) ? "even" : "odd");
+        stringBuilder.append(String.join(", ", foundProperties));
+
+        System.out.println(stringBuilder);
+    }
+
+    private static void processProperties(final long num, final List<String> foundProperties) {
         if (isBuzz(num)) {
             foundProperties.add("buzz");
         }
@@ -416,10 +396,5 @@ public class Main {
         if (isSad(num)) {
             foundProperties.add("sad");
         }
-
-        foundProperties.add(isEven(num) ? "even" : "odd");
-        stringBuilder.append(String.join(", ", foundProperties));
-
-        System.out.println(stringBuilder);
     }
 }
