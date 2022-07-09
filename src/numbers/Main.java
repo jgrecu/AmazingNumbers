@@ -26,7 +26,7 @@ public class Main {
                 continue;
             }
 
-            String[] strings = inString.split(" ", 3);
+            String[] strings = inString.split("\\s+", 3);
 
             if (!isNumeric(strings[0])) {
                 System.out.println("The first parameter should be a natural number or zero.");
@@ -52,7 +52,7 @@ public class Main {
             } else {
                 long num = Long.parseLong(strings[0]);
                 int x = Integer.parseInt(strings[1]);
-                final List<String> properties = Arrays.stream(strings[2].split(" "))
+                final List<String> properties = Arrays.stream(strings[2].split("\\s+"))
                         .map(String::toLowerCase).collect(Collectors.toList());
 
                 final List<String> invalidProperties = findInvalidProperties(properties);
@@ -281,24 +281,6 @@ public class Main {
             }
         }
         return wrongProperties;
-    }
-
-    public static boolean checkPropertyPairs(List<String> properties) {
-        // Check include/exclude of same property (e.g. odd -odd)
-        for (String property : properties) {
-            if (!property.startsWith("-") && properties.contains("-" + property)) {
-                return true;
-            }
-        }
-        //Check mutually exclusive properties (e.g. no number is both even and odd or duck and spy...).
-        boolean evenOrOdd = properties.contains("even") && properties.contains("odd") ||
-                properties.contains("-even") && properties.contains("-odd");
-        boolean duckOrSpy = properties.contains("duck") && properties.contains("spy");
-        boolean sunnyOrSquare = properties.contains("sunny") && properties.contains("square");
-        boolean happyOrSad = properties.contains("happy") && properties.contains("sad") ||
-                properties.contains("-happy") && properties.contains("-sad");
-
-        return evenOrOdd || duckOrSpy || sunnyOrSquare || happyOrSad;
     }
 
     public static List<String> findMutuallyExclusiveProperties(List<String> properties) {
