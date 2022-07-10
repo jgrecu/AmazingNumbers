@@ -5,14 +5,11 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 public class Main {
-    private static final String AVAILABLE_PROPERTIES = "Available properties: " + Arrays.asList(Property.values());
-
-    enum Property {
-        EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY, JUMPING, HAPPY, SAD
-    }
+    private static final String AVAILABLE_PROPERTIES = String.format("Available properties: %s",
+            Arrays.asList(Property.values()));
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        final Scanner scanner = new Scanner(System.in);
         printWelcome();
         printInstructions();
 
@@ -21,6 +18,7 @@ public class Main {
         while (true) {
             System.out.println("Enter a request: ");
             String inString = scanner.nextLine();
+
             if (inString.equals("")) {
                 printInstructions();
                 continue;
@@ -260,30 +258,15 @@ public class Main {
         return str.matches("(?!-)\\d+");
     }
 
-    public static boolean stringInPropertyList(String string) {
-        if (string.startsWith("-")) {
-            string = string.substring(1);
-        }
-        string = string.toUpperCase();
-        for (Property property : Property.values()) {
-            if (string.equals(property.name())) {
-                return true;
-            }
-        }
-        return false;
+    public static List<String> findInvalidProperties(final List<String> properties) {
+        return properties.stream().filter(string -> {
+            String finalString = string.startsWith("-") ?
+                    string.replace("-", "").toUpperCase() : string.toUpperCase();
+            return Arrays.stream(Property.values()).noneMatch(property -> property.name().equals(finalString));
+        }).collect(Collectors.toList());
     }
 
-    public static List<String> findInvalidProperties(List<String> properties) {
-        final List<String> wrongProperties = new ArrayList<>();
-        for (String property : properties) {
-            if (!stringInPropertyList(property)) {
-                wrongProperties.add(property);
-            }
-        }
-        return wrongProperties;
-    }
-
-    public static List<String> findMutuallyExclusiveProperties(List<String> properties) {
+    public static List<String> findMutuallyExclusiveProperties(final List<String> properties) {
         final List<String> contradictionList = new ArrayList<>();
 
         if (properties.contains("even") && properties.contains("odd")) {
