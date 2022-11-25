@@ -19,20 +19,20 @@ public class Main {
             System.out.println("Enter a request: ");
             String inString = scanner.nextLine();
 
-            if (inString.equals("")) {
+            if (inString.isEmpty()) {
                 printInstructions();
                 continue;
             }
 
             String[] strings = inString.split("\\s+", 3);
 
-            if (!isNumeric(strings[0])) {
+            if (isNotNumeric(strings[0])) {
                 System.out.println("The first parameter should be a natural number or zero.");
                 continue;
             } else if (strings[0].equals("0")) {
                 System.out.println("Goodbye!");
                 break;
-            } else if (strings.length >= 2 && !isNumeric(strings[1])) {
+            } else if (strings.length >= 2 && isNotNumeric(strings[1])) {
                 System.out.println("The second parameter should be a natural number.");
                 continue;
             } else if (strings.length >= 2 && strings[1].equals("0")) {
@@ -83,16 +83,18 @@ public class Main {
     }
 
     public static void printInstructions() {
-        System.out.println("Supported requests:\n" +
-                "- enter a natural number to know its properties;\n" +
-                "- enter two natural java.numbers to obtain the properties of the list:\n" +
-                "  * the first parameter represents a starting number;\n" +
-                "  * the second parameter shows how many consecutive java.numbers are to be printed;\n" +
-                "- two natural java.numbers and a property to search for;\n" +
-                "- two natural java.numbers and properties to search for;\n" +
-                "- a property preceded by minus must not be present in java.numbers;\n" +
-                "- separate the parameters with one space;\n" +
-                "- enter 0 to exit.\n");
+        System.out.println("""
+                Supported requests:
+                - enter a natural number to know its properties;
+                - enter two natural java.numbers to obtain the properties of the list:
+                  * the first parameter represents a starting number;
+                  * the second parameter shows how many consecutive java.numbers are to be printed;
+                - two natural java.numbers and a property to search for;
+                - two natural java.numbers and properties to search for;
+                - a property preceded by minus must not be present in java.numbers;
+                - separate the parameters with one space;
+                - enter 0 to exit.
+                """);
     }
 
     public static void runAmazingNumbers(long num, int x) {
@@ -100,34 +102,21 @@ public class Main {
     }
 
     public static boolean runNumber(long num, String property) {
-        switch (property) {
-            case "even":
-                return isEven(num);
-            case "odd":
-                return isOdd(num);
-            case "buzz":
-                return isBuzz(num);
-            case "duck":
-                return isDuck(num);
-            case "palindromic":
-                return isPalindromic(num);
-            case "gapful":
-                return isGapful(num);
-            case "spy":
-                return isSpy(num);
-            case "sunny":
-                return isSunny(num);
-            case "square":
-                return isSquare(num);
-            case "jumping":
-                return isJumping(num);
-            case "happy":
-                return isHappy(num);
-            case "sad":
-                return isSad(num);
-            default:
-                return false;
-        }
+        return switch (property) {
+            case "even" -> isEven(num);
+            case "odd" -> isOdd(num);
+            case "buzz" -> isBuzz(num);
+            case "duck" -> isDuck(num);
+            case "palindromic" -> isPalindromic(num);
+            case "gapful" -> isGapful(num);
+            case "spy" -> isSpy(num);
+            case "sunny" -> isSunny(num);
+            case "square" -> isSquare(num);
+            case "jumping" -> isJumping(num);
+            case "happy" -> isHappy(num);
+            case "sad" -> isSad(num);
+            default -> false;
+        };
     }
 
     public static void runAmazingNumbers(long num, int x, List<String> properties) {
@@ -189,9 +178,9 @@ public class Main {
             String concatFirstLast = strings[0] + strings[strings.length - 1];
             long second = Long.parseLong(concatFirstLast);
             return n % second == 0;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     public static boolean isSpy(long n) {
@@ -254,8 +243,8 @@ public class Main {
         return m != 1;
     }
 
-    public static boolean isNumeric(String str) {
-        return str.matches("(?!-)\\d+");
+    public static boolean isNotNumeric(String str) {
+        return !str.matches("(?!-)\\d+");
     }
 
     public static List<String> findInvalidProperties(final List<String> properties) {
